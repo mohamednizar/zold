@@ -8,17 +8,16 @@ branches:
     - gh-pages
 os: Windows Server 2012
 environment:
-  bundle_gemfile: integration-test/Gemfile.winrm
-  bundler_url: https://rubygems.org/downloads/bundler-1.9.9.gem
   matrix:
-    - ruby_version: "26-x64"
+    - ruby_version: "26"
     - openssl_version : "2.1.1"
 install:
+  - set PATH=C:\Ruby%ruby_version%-64\bin;%PATH%
   - ps: |
-      $Env:PATH = "C:\Ruby${Env:ruby_version}\bin;${Env:PATH}"
+      $Env:PATH = "C:\Ruby${Env:ruby_version}-x64\bin;${Env:PATH}"
       if ($Env:ruby_version -match "^23" ) {
         # RubyInstaller; download OpenSSL headers from OpenKnapsack Project
-        $Env:openssl_dir = "C:\Ruby${Env:ruby_version}"
+        $Env:openssl_dir = "C:\Ruby${Env:ruby_version}-x64"
         appveyor DownloadFile http://dl.bintray.com/oneclick/OpenKnapsack/x64/openssl-${Env:ruby_version}j-x64-windows.tar.lzma
         7z e openssl-${Env:ruby_version}j-x64-windows.tar.lzma
         7z x -y -oC:\Ruby${Env:ruby_version} openssl-${Env:ruby_version}j-x64-windows.tar
@@ -29,17 +28,14 @@ install:
   #- bundle config --local path vendor/bundle
   - ruby --version
   - gem --version
-  - appveyor DownloadFile -Url %bundler_url% -FileName bundler.gem
-  - gem install --local bundler.gem --no-document --force
 
   # Download & extract libcurl
   # Copy libcurl.{dll,lib} and add to PATH, so that libcurl.dll is found during the tests
   - ps: |
         appveyor DownloadFile "https://dl.dropboxusercontent.com/s/jxwohqax4e2avyt/libcurl-7.48.0-WinSSL-zlib-x86-x64.zip?dl=0" -FileName libcurl.zip
         7z x libcurl.zip
-        cp dmd2\windows\bin64\libcurl.dll C:\Ruby${Env:ruby_version}\bin
-        cp dmd2\windows\lib64\curl.lib C:\Ruby${Env:ruby_version}\bin
-
+        cp dmd2\windows\bin64\libcurl.dll C:\Ruby${Env:ruby_version}-x64\bin
+        cp dmd2\windows\lib64\curl.lib C:\Ruby${Env:ruby_version}-x64\bin
   - bundle config build.openssl --with-openssl-dir=%openssl_dir%
   - bundle config build.eventmachine --use-system-libraries --with-ssl-dir=%openssl_dir%
   - ruby -v
