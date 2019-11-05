@@ -46,5 +46,5 @@ build_script:
   - bundle install --force
 test_script:
   - bundle exec rake --quiet
-cache:
-  - vendor/bundle
+# cache:
+#   - vendor/bundle
