@@ -43,7 +43,7 @@ build_script:
   # https://github.com/eventmachine/eventmachine/issues/800
   #
   - gem install eventmachine -v 1.2.5
-  - bundle install
+  - bundle install --force
 test_script:
   - bundle exec rake --quiet
 cache:
